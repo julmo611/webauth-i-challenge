@@ -1,14 +1,11 @@
-const express = require('express')
-const router = express.Router()
-const knex = require('knex')
-const knexConfig = require('../knexfile.js')
-const Users = require('../users/users-model.js');
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcryptjs');
+const db = require('../users/users-model.js');
 
-const db = knex(knexConfig.development)
-
-
-router.get('/api/users', restricted,(req, res) => {
-    Users.find()
+router.get('/', restricted,(req, res) => {
+    
+    db.find()
       .then(users => {
         res.json(users);
       })
@@ -16,12 +13,11 @@ router.get('/api/users', restricted,(req, res) => {
   });
 
 
-
 function restricted(req, res, next) {
     const { username, password } = req.headers;
   
     if (username && password) {
-      Users.findBy({ username })
+      db.findBy({ username })
         .first()
         .then(user => {
           // check tha password guess against the database

@@ -1,21 +1,17 @@
 const express = require('express')
 const router = express.Router()
-const knex = require('knex')
-const knexConfig = require('../knexfile.js')
+const bcrypt = require('bcryptjs');
+const db = require('../users/users-model.js');
 
-const db = knex(knexConfig.development)
-
-const Users = require('../users/users-model.js');
-
-
-router.post('/api/register', (req, res) => {
+router.post('/', (req, res) => {
     let user = req.body;
   
     const hash = bcrypt.hashSync(user.password, 4);
     user.password = hash;
   
-    Users.add(user)
+    db.add(user)
       .then(saved => {
+       
         res.status(201).json(saved);
       })
       .catch(error => {

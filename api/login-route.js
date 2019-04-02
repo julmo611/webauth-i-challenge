@@ -1,21 +1,17 @@
 const express = require('express')
 const router = express.Router()
-const knex = require('knex')
-const knexConfig = require('../knexfile.js')
-const Users = require('../users/users-model.js');
+const bcrypt = require('bcryptjs');
+const db = require('../users/users-model.js');
 
-const db = knex(knexConfig.development)
-
-
-router.post('/api/login', (req, res) => {
-    let { username, password } = req.body;
-  
-    Users.findBy({ username })
+router.post('/', (req, res) => {
+  let { username, password } = req.body;
+ 
+  db.findBy({ username })
       .first()
-      .then(user => {
+      .then(users => {
         // check tha password guess against the database
-        if (user && bcrypt.compareSync(password, user.password)) {
-          res.status(200).json({ message: `Welcome ${user.username}!` });
+        if (users && bcrypt.compareSync(password, users.password)) {
+          res.status(200).json({ message: `Welcome ${users.username}!` });
         } else {
           res.status(401).json({ message: 'Invalid Credentials' });
         }
